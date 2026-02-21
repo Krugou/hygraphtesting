@@ -28,6 +28,8 @@
     "graphql": "^16.8.1"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.3.0",
     "concurrently": "^9.2.1",
     "dotenv": "^17.3.1",
     "eslint": "^10.0.1",
@@ -35,9 +37,11 @@
     "eslint-plugin-prettier": "^5.5.5",
     "graphql-request": "^7.4.0",
     "husky": "^9.1.7",
+    "jest": "^30.2.0",
     "lint-staged": "^16.2.7",
-    "markdownlint-cli": "^0.12.0",
-    "prettier": "^3.8.1"
+    "markdownlint-cli": "^0.47.0",
+    "prettier": "^3.8.1",
+    "ts-jest": "^29.4.6"
   },
   "lint-staged": {
     "*.{js,mjs}": [

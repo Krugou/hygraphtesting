@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "types": [
+      "node",
+      "jest"
+    ],
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "Node",
