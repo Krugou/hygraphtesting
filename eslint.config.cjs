@@ -1,18 +1,10 @@
-import { defineConfig } from 'eslint/config';
-import checkFile from 'eslint-plugin-check-file';
-
-const eslintConfig = defineConfig([
-  // Base project rules for a Node.js repository
+/** @type {import('eslint').FlatConfig[]} */
+module.exports = [
+  // base configuration object
   {
-    extends: ['plugin:prettier/recommended'],
     plugins: {
-      'check-file': checkFile,
-    },
-    languageOptions: {
-      parserOptions: {
-        ecmaVersion: 2022,
-        sourceType: 'module',
-      },
+      // prettier plugin for formatting
+      prettier: require('eslint-plugin-prettier'),
     },
     rules: {
       'prettier/prettier': 'error',
@@ -25,7 +17,6 @@ const eslintConfig = defineConfig([
       'prefer-template': 'error',
       'no-prototype-builtins': 'error',
       'no-duplicate-imports': 'error',
-
       'prefer-arrow-callback': 'error',
       'func-style': ['error', 'expression'],
       'arrow-body-style': ['error', 'as-needed'],
@@ -35,11 +26,14 @@ const eslintConfig = defineConfig([
       'curly': ['error', 'all'],
       'no-console': 'warn',
     },
+    languageOptions: {
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module',
+      },
+    },
   },
-  // Global ignore patterns
   {
     ignores: ['node_modules/**', '.git/**', 'dist/**'],
   },
-]);
-
-export default eslintConfig;
+];

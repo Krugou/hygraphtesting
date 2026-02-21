@@ -10,20 +10,27 @@ if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true });
 }
 const logFile = path.join(logDir, 'queries.log');
-function log(...args) {
+const log = (...args) => {
   const message = args.map((a) => (typeof a === 'string' ? a : JSON.stringify(a))).join(' ');
   console.log(message);
-  fs.appendFileSync(logFile, message + '\n');
-}
+  fs.appendFileSync(logFile, `${message}\n`);
+};
 
-// query for a typical Post collection; modify if your model is named differently
-const GET_POSTS = gql`
-  query GetPosts {
-    posts(first: 5, orderBy: createdAt_DESC) {
+// query for a simple Translation collection; change the field names if
+// you gave your model a different root name in Hygraph.
+const GET_TRANSLATIONS = gql`
+  query GetTranslations {
+    translations(first: 500, orderBy: createdAt_DESC) {
       id
-      title
+      translationId
+      description
+      translation
       stage
       createdAt
+      localizations {
+        locale
+        translation
+      }
     }
   }
 `;
@@ -41,17 +48,32 @@ const INTROSPECTION = gql`
   }
 `;
 
-async function runQueries() {
-  log('Fetching posts from Hygraph...');
+const runQueries = async () => {
+  log('Fetching translations from Hygraph...');
 
   try {
-    const data = await client.request(GET_POSTS);
+    const data = await client.request(GET_TRANSLATIONS);
     log('✅ Query Successful!');
-    log(JSON.stringify(data, null, 2));
+
+    // restructure so each record explicitly shows both locales
+    // default translation remains under `translation`, but we add
+    // `translation_en` and `translation_fi` for clarity.
+    const withLocales = data.translations.map((t) => {
+      const copy = { ...t };
+      // assign default locale if available
+      if (t.localizations) {
+        t.localizations.forEach((loc) => {
+          copy[`translation_${loc.locale}`] = loc.translation;
+        });
+      }
+      return copy;
+    });
+
+    log(JSON.stringify(withLocales, null, 2));
     return;
   } catch (error) {
     log('❌ Error fetching data:', error.message);
-    if (/field 'posts' is not defined/.test(error.message)) {
+    if (/field 'translations' is not defined/.test(error.message)) {
       // introspect to give hints and possibly retry with a different field
       try {
         const schema = await client.request(INTROSPECTION);
@@ -59,20 +81,28 @@ async function runQueries() {
         log('Available root query fields:');
         fields.forEach((n) => log(' -', n));
 
-        // look for a plural that starts with "post" ignoring case
-        const plural = fields.find((n) => /^post/i.test(n) && n.toLowerCase() !== 'post');
+        // look for a plural that starts with "translation" ignoring case
+        const plural = fields.find(
+          (n) => /^translation/i.test(n) && n.toLowerCase() !== 'translation',
+        );
         if (plural) {
           log(`
 ⚡ Attempting again using the '${plural}' field name...
 `);
           // build a simple query string dynamically
           const dynamicQuery = gql`
-            query GetPostsAlternative {
-              ${plural}(first: 5, orderBy: createdAt_DESC) {
+            query GetTranslationsAlternative {
+              ${plural}(first: 500, orderBy: createdAt_DESC) {
                 id
-                title
+                translationId
+                description
+                translation
                 stage
                 createdAt
+                localizations {
+                  locale
+                  translation
+                }
               }
             }
           `;
@@ -86,6 +116,6 @@ async function runQueries() {
       }
     }
   }
-}
+};
 
 runQueries();

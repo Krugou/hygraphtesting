@@ -6,13 +6,15 @@ import 'dotenv/config';
 
 // log setup
 const logDir = path.resolve('.log');
-if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true });
+}
 const logFile = path.join(logDir, 'management.log');
-function log(...args) {
+const log = (...args) => {
   const msg = args.map((a) => (typeof a === 'string' ? a : JSON.stringify(a))).join(' ');
   console.log(msg);
-  fs.appendFileSync(logFile, msg + '\n');
-}
+  fs.appendFileSync(logFile, `${msg}\n`);
+};
 
 const require = createRequire(import.meta.url);
 const { Client, SimpleFieldType } = require('@hygraph/management-sdk');
@@ -24,7 +26,12 @@ if (!process.env.HYGRAPH_MANAGEMENT_URL || !process.env.HYGRAPH_MANAGEMENT_TOKEN
   log(
     'Missing HYGRAPH_MANAGEMENT_URL or HYGRAPH_MANAGEMENT_TOKEN in .env file.\n' +
       'Make sure you generated a Management API token with `MODEL_UPDATE` ' +
-      'permissions and pointed HYGRAPH_MANAGEMENT_URL at the management endpoint.',
+      'permissions and pointed HYGRAPH_MANAGEMENT_URL at the *correct* endpoint.',
+  );
+  log(
+    'The SDK expects the Content API URL for a specific environment (e.g. ' +
+      'https://api-region.hygraph.com/v2/PROJECT_ID/master), not the generic ' +
+      'management host. See .env.example for the proper format.',
   );
   process.exit(1);
 }
@@ -34,7 +41,7 @@ const client = new Client({
   endpoint: process.env.HYGRAPH_MANAGEMENT_URL,
 });
 
-async function runManagement() {
+const runManagement = async () => {
   log("Creating a new 'TestCategory' model via Management SDK...");
 
   try {
@@ -72,7 +79,14 @@ async function runManagement() {
     }
   } catch (error) {
     log('❌ Management SDK Error:', error.message);
+    if (error.message && error.message.includes('Could not find environment')) {
+      log(
+        'Hint: your HYGRAPH_MANAGEMENT_URL may be pointing at the wrong place. ' +
+          'Use the content API endpoint for the environment you want to target (e.g. ' +
+          '`https://api-us-west-2.hygraph.com/v2/PROJECT_ID/master`).',
+      );
+    }
   }
-}
+};
 
 runManagement();

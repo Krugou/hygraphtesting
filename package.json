@@ -7,9 +7,11 @@
   "scripts": {
     "test:queries": "node scripts/queries.js",
     "test:mutations": "node scripts/mutations.js",
+    "test:push-locales": "node scripts/pushLocales.js",
+    "test:user-models": "node scripts/userModels.js",
     "test:assets": "node scripts/assets.js",
     "test:management": "node scripts/management.js",
-    "test:all": "npm run test:queries && npm run test:mutations && npm run test:assets && npm run test:management",
+    "test:all": "npm run test:queries && npm run test:mutations && npm run test:push-locales && npm run test:user-models && npm run test:assets && npm run test:management",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -17,17 +19,17 @@
   },
   "dependencies": {
     "@hygraph/management-sdk": "^1.5.2",
-    "dotenv": "^16.4.5",
-    "graphql": "^16.8.1",
-    "graphql-request": "^6.1.0"
+    "graphql": "^16.8.1"
   },
   "devDependencies": {
-    "eslint": "^8.0.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "husky": "^8.0.0",
-    "lint-staged": "^13.0.0",
-    "prettier": "^3.0.0"
+    "dotenv": "^17.3.1",
+    "eslint": "^10.0.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "graphql-request": "^7.4.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.8.1"
   },
   "lint-staged": {
     "*.{js,mjs}": [

@@ -6,76 +6,80 @@ import { client } from './client.js';
 
 // create log directory and file
 const logDir = path.resolve('.log');
-if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true });
+}
 const logFile = path.join(logDir, 'mutations.log');
-function log(...args) {
+const log = (...args) => {
   const msg = args.map((a) => (typeof a === 'string' ? a : JSON.stringify(a))).join(' ');
   console.log(msg);
-  fs.appendFileSync(logFile, msg + '\n');
-}
+  fs.appendFileSync(logFile, `${msg}\n`);
+};
 
-// The `content` field on the Post model is often a rich text field (RichTextAST).
-// The GraphQL API expects a JSON document rather than a plain string.
-// create mutation doesn't include publishing step; we'll run publish
-// separately because the unique field used by your project may not be
-// `title`.
-const CREATE_POST = gql`
-  mutation CreatePost($title: String!, $content: RichTextAST!) {
-    createPost(data: { title: $title, content: $content }) {
+// The Translation model in this project has a few simple string fields
+// (all of them are single‑line text in the schema).  We'll create a
+// translation record and then publish it the same way the original post
+// script worked.
+//
+// Adjust the variable names and types to match whatever fields you actually
+// created in Hygraph; the names below are based on the column labels you
+// provided in your request.
+//
+const CREATE_TRANSLATION = gql`
+  mutation CreateTranslation(
+    $translationId: String!
+    $description: String!
+    $translation: String!
+  ) {
+    createTranslation(
+      data: { translationId: $translationId, description: $description, translation: $translation }
+    ) {
       id
-      title
+      translationId
     }
   }
 `;
 
-const PUBLISH_POST = gql`
-  mutation PublishPost($id: ID!) {
-    publishPost(where: { id: $id }, to: PUBLISHED) {
+const PUBLISH_TRANSLATION = gql`
+  mutation PublishTranslation($id: ID!) {
+    publishTranslation(where: { id: $id }, to: PUBLISHED) {
       id
       stage
     }
   }
 `;
 
-// utility that produces a minimal Slate.js AST for a rich‑text field
-// Hygraph expects the `children` style structure used by slate.js
-function simpleRichText(text) {
-  return {
-    children: [
-      {
-        type: 'paragraph',
-        children: [{ text }],
-      },
-    ],
-  };
-}
+// earlier versions of the script needed a RichTextAST helper for post
+// content.  Translation fields are plain strings so we no longer need that
+// utility.  If you ever need rich text again you can re‑add it.
 
-async function runMutations() {
-  log('Creating and publishing a new post...');
+const runMutations = async () => {
+  log('Creating and publishing a new translation record...');
 
   const variables = {
-    title: `Automated Test Post ${Date.now()}`,
-    content: simpleRichText('This post was created via a Node.js mutation script.'),
+    translationId: `auto-${Date.now()}`,
+    description: 'This entry was created via a Node.js mutation script.',
+    translation: 'Sample translated text',
   };
 
   try {
-    const createData = await client.request(CREATE_POST, variables);
-    log('✅ Post created!');
+    const createData = await client.request(CREATE_TRANSLATION, variables);
+    log('✅ Translation record created!');
     log(JSON.stringify(createData, null, 2));
 
-    const id = createData.createPost.id;
-    const publishData = await client.request(PUBLISH_POST, { id });
-    log('✅ Post published!');
+    const id = createData.createTranslation.id;
+    const publishData = await client.request(PUBLISH_TRANSLATION, { id });
+    log('✅ Translation published!');
     log(JSON.stringify(publishData, null, 2));
   } catch (error) {
     log('❌ Error executing mutation:', error.message);
     if (/permission/i.test(error.message) || error.message.includes('403')) {
       log(
         'Hint: check that HYGRAPH_TOKEN has write/publish permissions for the ' +
-          'Post model and is not a read‑only key.',
+          'Translation model and is not a read‑only key.',
       );
     }
   }
-}
+};
 
 runMutations();

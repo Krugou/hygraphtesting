@@ -5,13 +5,11 @@ A comprehensive testing environment to explore and demonstrate [Hygraph](https:/
 ## Prerequisites
 
 - **Node.js** v16+
-- **A Hygraph** project with a configured `Post` model (fields: `title`, `content`).
-  > **Note:** if the root query field `posts` does not exist you may have
-  > renamed or removed the model; the query script now prints all available
-  > root fields to help diagnose this.
+- **A Hygraph** project with a configured `Translation` model (fields: `translationId`, `description`, `translation`, `localized`).
+  > **Note:** if the root query field for your model does not exist you may have
+  > renamed or removed it; the query script prints all available root fields and
+  > will attempt a sensible fallback.
 - A **Permanent Auth Token** with full rights (Read, Write, Publish).
-  If your `content` field is a Rich‑Text field (the default nowadays), the
-  sample mutation sends a minimal `RichTextAST` document instead of a string.
 - _(Optional)_ A **Management API Token** for schema operations. This must be
   a separate token (set in `HYGRAPH_MANAGEMENT_TOKEN`) with `MODEL_UPDATE`
   permission, otherwise the management test will fail with a "missing
@@ -49,6 +47,8 @@ A comprehensive testing environment to explore and demonstrate [Hygraph](https:/
    | `HYGRAPH_MANAGEMENT_URL`   | Management API endpoint            |
    | `HYGRAPH_MANAGEMENT_TOKEN` | Management API token               |
 
+> **Note:** unlike `HYGRAPH_URL`, the management URL must point at the **content API endpoint for a specific environment** (e.g. `https://api-region.hygraph.com/v2/PROJECT_ID/master`). The generic `https://management.hygraph.com/graphql` host will trigger the "Could not find environment" error shown in the tests.
+
 ## Available Scripts
 
 All of the sample scripts now persist their console output into individual log
@@ -56,12 +56,14 @@ files under a `.log/` directory (`queries.log`, `mutations.log`,
 `assets.log`, `management.log`). This makes it easier to review results after
 running `npm run test:all` or troubleshooting CI jobs.
 
-| Command                   | Script                  | Description                                                  |
-| ------------------------- | ----------------------- | ------------------------------------------------------------ |
-| `npm run test:queries`    | `scripts/queries.js`    | Fetch posts with ordering & pagination                       |
-| `npm run test:mutations`  | `scripts/mutations.js`  | Create and publish a post in one request                     |
-| `npm run test:assets`     | `scripts/assets.js`     | Upload a remote image via the GraphQL `createAsset` mutation |
-| `npm run test:management` | `scripts/management.js` | Create a model & field via the Management SDK                |
+| Command                     | Script                   | Description                                                  |
+| --------------------------- | ------------------------ | ------------------------------------------------------------ |
+| `npm run test:queries`      | `scripts/queries.js`     | Fetch translations with ordering & pagination                |
+| `npm run test:user-models`  | `scripts/userModels.js`  | List custom schema models and sample entries                 |
+| `npm run test:mutations`    | `scripts/mutations.js`   | Create and publish a translation entry in one request        |
+| `npm run test:push-locales` | `scripts/pushLocales.js` | Create both fi and en translations for a key                 |
+| `npm run test:assets`       | `scripts/assets.js`      | Upload a remote image via the GraphQL `createAsset` mutation |
+| `npm run test:management`   | `scripts/management.js`  | Create a model & field via the Management SDK                |
 
 ## Project Structure
 
@@ -85,10 +87,16 @@ The examples have been updated for Hygraph's current API:
 
 - queries now perform an introspection fallback when the expected field is
   missing (the model may have been renamed or deleted).
-- mutations target rich‑text fields correctly by using `RichTextAST`. If you
-  switch to a plain string field the variable type will need to be adjusted.
-- asset uploads use a GraphQL mutation instead of the legacy REST endpoint.
-- management SDK script reads from dedicated `HYGRAPH_MANAGEMENT_*` variables
+- the sample mutation was converted from a `Post` example to a much simpler
+  `Translation` record; every field is a plain string and therefore no rich‑text
+  helper is required.
+- a new `userModels.js` helper introspects your project and emits only the
+  custom top‑level fields along with a sample of their entries (timestamps
+  included); the results are saved in `.log/userModels.json`.
+- added `pushLocales.js` which takes a translationId plus English/Finnish text
+  and creates two locale versions of the same entry, publishing each one.
+- asset uploads use a GraphQL mutation instead of the legacy REST endpoint; the mutation now expects `uploadUrl` (not `url`).
+- management SDK script reads from dedicated `HYGRAPH_MANAGEMENT_*` variables and the URL should point at the **content API environment** (see .env.example)
   and gives clearer advice when permissions are insufficient.
 
 - **GraphQL Queries** — Fetching, filtering, sorting, and paginating content

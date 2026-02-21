@@ -7,18 +7,20 @@ import { gql } from 'graphql-request';
 import { client } from './client.js';
 
 const logDir = path.resolve('.log');
-if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true });
+}
 const logFile = path.join(logDir, 'assets.log');
-function log(...args) {
+const log = (...args) => {
   const msg = args.map((a) => (typeof a === 'string' ? a : JSON.stringify(a))).join(' ');
   console.log(msg);
-  fs.appendFileSync(logFile, msg + '\n');
-}
+  fs.appendFileSync(logFile, `${msg}\n`);
+};
 
-// simple mutation that accepts a URL
+// simple mutation that accepts a remote URL; the API now expects an `uploadUrl` field
 const CREATE_ASSET = gql`
-  mutation CreateAsset($url: String!) {
-    createAsset(data: { url: $url }) {
+  mutation CreateAsset($uploadUrl: String!) {
+    createAsset(data: { uploadUrl: $uploadUrl }) {
       id
       url
       mimeType
@@ -26,12 +28,13 @@ const CREATE_ASSET = gql`
   }
 `;
 
-async function uploadAsset() {
+const uploadAsset = async () => {
   log('Uploading asset to Hygraph via GraphQL...');
+  // public image URL to send to Hygraph; previous versions used a `url` input
   const fileUrl = 'https://picsum.photos/200';
 
   try {
-    const data = await client.request(CREATE_ASSET, { url: fileUrl });
+    const data = await client.request(CREATE_ASSET, { uploadUrl: fileUrl });
     log('✅ Asset Uploaded Successfully!');
     log(JSON.stringify(data, null, 2));
   } catch (error) {
@@ -39,6 +42,6 @@ async function uploadAsset() {
     // if the old endpoint still exists this catch block will provide the
     // underlying JSON from the server so you can inspect the reason.
   }
-}
+};
 
 uploadAsset();
