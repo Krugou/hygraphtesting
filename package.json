@@ -5,6 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start:server": "node server/index.js",
+    "start": "npm run start:server",
+    "dev": "concurrently \"npm run start:server\" \"npm --prefix frontend run dev\"",
     "test:queries": "node scripts/queries.js",
     "test:mutations": "node scripts/mutations.js",
     "test:push-locales": "node scripts/pushLocales.js",
@@ -14,14 +17,18 @@
     "test:all": "npm run test:queries && npm run test:mutations && npm run test:push-locales && npm run test:user-models && npm run test:assets && npm run test:management",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "lint:md": "markdownlint '**/*.md'",
     "format": "prettier --write .",
     "prepare": "husky install"
   },
   "dependencies": {
     "@hygraph/management-sdk": "^1.5.2",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
     "graphql": "^16.8.1"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "dotenv": "^17.3.1",
     "eslint": "^10.0.1",
     "eslint-config-prettier": "^10.1.8",
@@ -29,11 +36,16 @@
     "graphql-request": "^7.4.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
+    "markdownlint-cli": "^0.12.0",
     "prettier": "^3.8.1"
   },
   "lint-staged": {
     "*.{js,mjs}": [
       "eslint --fix",
+      "prettier --write"
+    ],
+    "*.md": [
+      "markdownlint --config .markdownlint.json",
       "prettier --write"
     ]
   }

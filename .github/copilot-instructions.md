@@ -25,6 +25,9 @@ This is a small Node.js project that interacts with Hygraph GraphQL API. It cont
 
 - There is no CI configuration in the repo. When adding features, ensure they run locally.
 - Branching follows GitHub Flow: create feature branches off `main`.
+- Frontend styling uses Tailwind CSS v4 with the `@tailwindcss/vite` plugin.
+- Do not reintroduce `tailwind.config.js` or `postcss.config.js` unless explicitly needed.
+- Keep `frontend/src/index.css` as the Tailwind entrypoint (`@import 'tailwindcss'`).
 
 ## Copilot Usage
 
@@ -32,4 +35,4 @@ This is a small Node.js project that interacts with Hygraph GraphQL API. It cont
 - Avoid adding unnecessary dependencies.
 - If unsure about API usage, consult Hygraph documentation.
 
-Feel free to ask questions directly in comments or open issues.
+Never ask questions just start working and if errors are encountered, try to fix them based on the error messages and project context.

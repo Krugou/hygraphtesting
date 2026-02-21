@@ -1,0 +1,8 @@
+{
+  "default": true,
+  "MD031": {
+    "level": "error",
+    "c": 1
+  },
+  "MD013": false
+}
