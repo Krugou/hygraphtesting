@@ -1,0 +1,38 @@
+{
+  "name": "hygraph-testing-sandbox",
+  "version": "1.0.0",
+  "description": "Node.js testing sandbox for Hygraph capabilities",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test:queries": "node scripts/queries.js",
+    "test:mutations": "node scripts/mutations.js",
+    "test:assets": "node scripts/assets.js",
+    "test:management": "node scripts/management.js",
+    "test:all": "npm run test:queries && npm run test:mutations && npm run test:assets && npm run test:management",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "@hygraph/management-sdk": "^1.5.2",
+    "dotenv": "^16.4.5",
+    "graphql": "^16.8.1",
+    "graphql-request": "^6.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.0.0",
+    "prettier": "^3.0.0"
+  },
+  "lint-staged": {
+    "*.{js,mjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
+}
