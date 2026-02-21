@@ -19,6 +19,8 @@ A comprehensive testing environment to explore and demonstrate [Hygraph](https:/
 
 ## Setup
 
+(Note: the `.log` folder is created automatically when any script runs.)
+
 1. **Clone the repository**
 
    ```bash
@@ -49,6 +51,11 @@ A comprehensive testing environment to explore and demonstrate [Hygraph](https:/
 
 ## Available Scripts
 
+All of the sample scripts now persist their console output into individual log
+files under a `.log/` directory (`queries.log`, `mutations.log`,
+`assets.log`, `management.log`). This makes it easier to review results after
+running `npm run test:all` or troubleshooting CI jobs.
+
 | Command                   | Script                  | Description                                                  |
 | ------------------------- | ----------------------- | ------------------------------------------------------------ |
 | `npm run test:queries`    | `scripts/queries.js`    | Fetch posts with ordering & pagination                       |
@@ -58,7 +65,7 @@ A comprehensive testing environment to explore and demonstrate [Hygraph](https:/
 
 ## Project Structure
 
-```
+```text
 hygraphtesting/
 ├── scripts/
 │   ├── client.js        # Shared GraphQL client (reads .env)

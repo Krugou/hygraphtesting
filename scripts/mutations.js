@@ -1,6 +1,18 @@
 // scripts/mutations.js
+import fs from 'fs';
+import path from 'path';
 import { gql } from 'graphql-request';
 import { client } from './client.js';
+
+// create log directory and file
+const logDir = path.resolve('.log');
+if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+const logFile = path.join(logDir, 'mutations.log');
+function log(...args) {
+  const msg = args.map((a) => (typeof a === 'string' ? a : JSON.stringify(a))).join(' ');
+  console.log(msg);
+  fs.appendFileSync(logFile, msg + '\n');
+}
 
 // The `content` field on the Post model is often a rich text field (RichTextAST).
 // The GraphQL API expects a JSON document rather than a plain string.
@@ -25,26 +37,21 @@ const PUBLISH_POST = gql`
   }
 `;
 
-// utility that produces a minimal RichText AST from plain text
+// utility that produces a minimal Slate.js AST for a rich‑text field
+// Hygraph expects the `children` style structure used by slate.js
 function simpleRichText(text) {
   return {
-    type: 'doc',
-    content: [
+    children: [
       {
         type: 'paragraph',
-        content: [
-          {
-            type: 'text',
-            text,
-          },
-        ],
+        children: [{ text }],
       },
     ],
   };
 }
 
 async function runMutations() {
-  console.log('Creating and publishing a new post...');
+  log('Creating and publishing a new post...');
 
   const variables = {
     title: `Automated Test Post ${Date.now()}`,
@@ -53,15 +60,21 @@ async function runMutations() {
 
   try {
     const createData = await client.request(CREATE_POST, variables);
-    console.log('✅ Post created!');
-    console.dir(createData, { depth: null });
+    log('✅ Post created!');
+    log(JSON.stringify(createData, null, 2));
 
     const id = createData.createPost.id;
     const publishData = await client.request(PUBLISH_POST, { id });
-    console.log('✅ Post published!');
-    console.dir(publishData, { depth: null });
+    log('✅ Post published!');
+    log(JSON.stringify(publishData, null, 2));
   } catch (error) {
-    console.error('❌ Error executing mutation:', error.message);
+    log('❌ Error executing mutation:', error.message);
+    if (/permission/i.test(error.message) || error.message.includes('403')) {
+      log(
+        'Hint: check that HYGRAPH_TOKEN has write/publish permissions for the ' +
+          'Post model and is not a read‑only key.',
+      );
+    }
   }
 }
 

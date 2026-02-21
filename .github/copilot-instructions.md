@@ -2,6 +2,10 @@
 
 These instructions are used by Copilot and agents when assisting with development in this repository.
 
+always update copilot instructions when making changes to the project structure, coding guidelines, or workflow. This ensures that Copilot can provide accurate and relevant suggestions based on the latest project context.
+
+always also add documentation to readme.md when making changes to the project structure, coding guidelines, or workflow. This ensures that all contributors have a clear understanding of how the project is organized and how to work with it effectively.
+
 ## Project Overview
 
 This is a small Node.js project that interacts with Hygraph GraphQL API. It contains scripts for asset management, client operations, mutations, and queries. Dependencies are managed via npm.

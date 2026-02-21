@@ -1,6 +1,18 @@
 // scripts/management.js
+import fs from 'fs';
+import path from 'path';
 import { createRequire } from 'module';
 import 'dotenv/config';
+
+// log setup
+const logDir = path.resolve('.log');
+if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+const logFile = path.join(logDir, 'management.log');
+function log(...args) {
+  const msg = args.map((a) => (typeof a === 'string' ? a : JSON.stringify(a))).join(' ');
+  console.log(msg);
+  fs.appendFileSync(logFile, msg + '\n');
+}
 
 const require = createRequire(import.meta.url);
 const { Client, SimpleFieldType } = require('@hygraph/management-sdk');
@@ -9,7 +21,7 @@ const { Client, SimpleFieldType } = require('@hygraph/management-sdk');
 // `MANAGEMENT` prefix so you don't accidentally run schema mutations with a
 // regular content token.
 if (!process.env.HYGRAPH_MANAGEMENT_URL || !process.env.HYGRAPH_MANAGEMENT_TOKEN) {
-  console.error(
+  log(
     'Missing HYGRAPH_MANAGEMENT_URL or HYGRAPH_MANAGEMENT_TOKEN in .env file.\n' +
       'Make sure you generated a Management API token with `MODEL_UPDATE` ' +
       'permissions and pointed HYGRAPH_MANAGEMENT_URL at the management endpoint.',
@@ -23,7 +35,7 @@ const client = new Client({
 });
 
 async function runManagement() {
-  console.log("Creating a new 'TestCategory' model via Management SDK...");
+  log("Creating a new 'TestCategory' model via Management SDK...");
 
   try {
     // 1. Create a new model
@@ -46,20 +58,20 @@ async function runManagement() {
     const result = await client.run(true);
 
     if (result.errors && result.errors.length > 0) {
-      console.error('❌ Schema Update Failed:', JSON.stringify(result.errors, null, 2));
+      log('❌ Schema Update Failed:', JSON.stringify(result.errors, null, 2));
       // common failure is permission denied; help the user understand
       if (result.errors.some((e) => /missing permission/.test(e.message))) {
-        console.error(
+        log(
           'Hint: your management token may not have MODEL_UPDATE or similar ' +
             'scope. Create a new permanent token in the Hygraph dashboard and ' +
             'try again.',
         );
       }
     } else {
-      console.log('✅ Schema Updated Successfully! Check your Hygraph dashboard.');
+      log('✅ Schema Updated Successfully! Check your Hygraph dashboard.');
     }
   } catch (error) {
-    console.error('❌ Management SDK Error:', error.message);
+    log('❌ Management SDK Error:', error.message);
   }
 }
 
