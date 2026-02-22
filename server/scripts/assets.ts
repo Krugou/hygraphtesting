@@ -1,5 +1,5 @@
 import { gql } from 'graphql-request';
-import { client } from './client';
+import { client } from './client.ts';
 
 export const CREATE_ASSET = gql`
   mutation CreateAsset($uploadUrl: String!) {

@@ -12,7 +12,7 @@ This is a small Node.js project that interacts with Hygraph GraphQL API. It cont
 
 ## Coding Guidelines
 
-- Follow standard JavaScript/Node.js practices.
+- Follow standard Typescript practices.
 - Keep code small and modular; scripts live in the `scripts/` folder.
 - Use `npm run lint` to check style and `npm test` (if available) for tests.
 

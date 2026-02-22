@@ -4,7 +4,8 @@
 export * from './client';
 export * from './mutations';
 export * from './queries';
-export * from './pushLocales';
+
+// Remove ambiguous re-exports to resolve module conflicts
 export * from './management';
 export * from './userModels';
 export * from './assets';

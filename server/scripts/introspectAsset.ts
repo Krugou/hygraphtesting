@@ -1,5 +1,5 @@
 import { gql } from 'graphql-request';
-import { client } from './client';
+import { client } from './client.ts';
 
 export const INTROSPECT_ASSET_INPUT = gql`
   query IntrospectAssetInput {

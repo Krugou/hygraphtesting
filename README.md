@@ -70,17 +70,25 @@ running `npm run test:all` or troubleshooting CI jobs.
 ```text
 hygraphtesting/
 ├── server/              # Express API server for pushing translations
-│   └── index.js
-├── scripts/
-│   ├── client.js        # Shared GraphQL client (reads .env)
-│   ├── queries.js       # Query tests
-│   ├── mutations.js     # Mutation tests
-│   ├── assets.js        # Asset upload tests
-│   └── management.js    # Management SDK tests
+│   └── index.ts         # TypeScript backend
+├── scripts/             # TypeScript Hygraph utilities
+│   ├── client.ts        # Shared GraphQL client (reads .env)
+│   ├── queries.ts       # Query tests
+│   ├── mutations.ts     # Mutation tests
+│   ├── assets.ts        # Asset upload tests
+│   ├── management.ts    # Management SDK tests
+│   └── pushLocales.ts   # Locale push helper
 ├── frontend/            # Vite + React + Tailwind UI for translation form
 │   ├── package.json
 │   ├── vite.config.js
 │   └── src/
+│       ├── App.tsx
+│       ├── components/
+│       │   ├── TranslationLookup.tsx
+│       │   ├── TranslationKeysPanel.tsx
+│       │   └── TranslationPushForm.tsx
+│       └── index.css
+├── tests/               # Jest tests for translation and asset ops
 ├── .env.example         # Environment variable template
 ├── .gitignore
 ├── package.json         # root repo (includes server dependencies)
@@ -89,50 +97,64 @@ hygraphtesting/
 
 ## Web Interface
 
-A simple React frontend and Express back end have been added to make it easy to
-push translation entries from a browser UI.
+The project now uses a fully TypeScript-based frontend and backend:
 
-- **server/** – an Express app that exposes `/api/translations` and wraps the
-  existing `pushLocales` helper.
-- **frontend/** – Vite‑powered React + Tailwind CSS v4 project. Tailwind uses
-  the `@tailwindcss/vite` plugin and a simple `@import 'tailwindcss'` entry
-  in `src/index.css` (no `tailwind.config.js` or `postcss.config.js`). The UI uses a
-  modern, mobile‑friendly card layout with focus rings, placeholders, and
-  responsive spacing. The form posts to the server. During development the
-  Vite dev server proxies `/api` to the Express back end.
+- **server/** – Express API in TypeScript exposes `/api/translations` and wraps the `pushLocales` helper.
+- **frontend/** – Vite‑powered React + Tailwind CSS v4 project. All components are TypeScript (TSX). Tailwind uses the `@tailwindcss/vite` plugin and a simple `@import 'tailwindcss'` entry in `src/index.css` (no `tailwind.config.js` or `postcss.config.js`).
+- **Locale Switching** – The UI allows users to select a locale for translation lookup and editing. All translation forms and lookup panels are locale-aware.
+- **Error Handling** – Robust error handling and logging are implemented throughout the frontend and backend.
+- **Test Automation** – Jest tests cover translation management, asset operations, environment validation, and schema introspection.
 
 ### Running the application
 
-1. install root dependencies and start both server and frontend in one go:
+1. Install root dependencies and start both server and frontend in one go:
 
    ```bash
    npm install
    npm run dev             # launches Express on 3000 and Vite on 5173
    ```
 
-   (you can still run `npm run start:server` or `cd frontend && npm run dev` separately if you prefer)
+(you can still run `npm run start:server` or `cd frontend && npm run dev` separately if you prefer)
 
-2. open a second terminal, change into `frontend/` and bring up the UI:
+2. Open a second terminal, change into `frontend/` and bring up the UI:
 
-   ```bash
-   cd frontend
-   npm install
-   npm run dev             # starts Vite on http://localhost:5173
-   ```
+```bash
+cd frontend
+npm install
+npm run dev             # starts Vite on http://localhost:5173
+```
 
-3. open the browser to `http://localhost:5173` and you'll see a simple UI
-   with two panels:
-   - **Lookup Translation** – enter a translation key and select a locale to
-     fetch the current value from Hygraph (via the API server). Useful for
-     testing existing entries.
-   - **Fetch Keys** – load all available `translationId` values for quick
-     browsing/testing.
-   - **Push Translations** – submit new English/Finnish pairs which are
-     created/published in Hygraph.
+3. Open the browser to `http://localhost:5173` and you'll see a modern UI:
 
-Both features use the same `/api/translations` endpoint; `GET` looks up
-data and `POST` pushes new content. Key listing uses
-`/api/translations/keys`.
+All features use the `/api/translations` endpoint; `GET` looks up data and `POST` pushes new content. Key listing uses `/api/translations/keys`.
+
+### Additional Features
+
+- **GraphQL Queries** — Fetching, filtering, sorting, and paginating content
+- **GraphQL Mutations** — Creating, updating, and publishing entries
+- **Nested & Bulk Mutations** — Modifying related entities in a single request
+- **Content Stages & Workflows** — Moving entries through `DRAFT → PUBLISHED`
+- **Asset Management** — Programmatic upload via the REST endpoint
+- **Schema Management** — Creating models and fields with the Management SDK
+- **Content Federation** — Querying remote sources through a unified endpoint
+- **Localization (i18n)** — Multi-language content variants with locale switching
+
+## TypeScript Migration
+
+All scripts, server, and frontend components are now TypeScript. Run tests with `npm run test:all` and scripts with `npx ts-node scripts/*.ts`.
+
+## Test Automation
+
+Jest tests are located in the `tests/` folder and cover:
+
+- Translation management
+- Asset operations
+- Environment validation
+- Schema introspection
+
+## CI/CD & Linting
+
+Linting and formatting are automated with `eslint`, `prettier`, and `markdownlint`. Add GitHub Actions for dependency updates and linting as needed.
 
 - **GraphQL Queries** — Fetching, filtering, sorting, and paginating content
 - **GraphQL Mutations** — Creating, updating, and publishing entries

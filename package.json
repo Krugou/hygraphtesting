@@ -2,40 +2,34 @@
   "name": "hygraph-testing-sandbox",
   "version": "1.0.0",
   "description": "Node.js testing sandbox for Hygraph capabilities",
-  "main": "index.js",
-  "type": "module",
+  "private": true,
+  "workspaces": [
+    "server",
+    "frontend"
+  ],
   "scripts": {
-    "start:server": "node server/index.js",
-    "start": "npm run start:server",
-    "dev": "concurrently \"npm run start:server\" \"npm --prefix frontend run dev\"",
-    "test:queries": "node scripts/queries.js",
-    "test:mutations": "node scripts/mutations.js",
-    "test:push-locales": "node scripts/pushLocales.js",
-    "test:user-models": "node scripts/userModels.js",
-    "test:assets": "node scripts/assets.js",
-    "test:management": "node scripts/management.js",
-    "test:all": "npm run test:queries && npm run test:mutations && npm run test:push-locales && npm run test:user-models && npm run test:assets && npm run test:management",
+    "start": "npm -w server run start",
+    "dev": "concurrently \"npm -w server run dev\" \"npm -w frontend run dev\"",
+    "test:queries": "npm -w server run test:queries",
+    "test:mutations": "npm -w server run test:mutations",
+    "test:push-locales": "npm -w server run test:push-locales",
+    "test:user-models": "npm -w server run test:user-models",
+    "test:assets": "npm -w server run test:assets",
+    "test:management": "npm -w server run test:management",
+    "test:all": "npm -w server run test:all",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:md": "markdownlint '**/*.md'",
     "format": "prettier --write .",
     "prepare": "husky install"
   },
-  "dependencies": {
-    "@hygraph/management-sdk": "^1.5.2",
-    "cors": "^2.8.5",
-    "express": "^5.2.1",
-    "graphql": "^16.8.1"
-  },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.3.0",
     "concurrently": "^9.2.1",
     "dotenv": "^17.3.1",
     "eslint": "^10.0.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
-    "graphql-request": "^7.4.0",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
     "lint-staged": "^16.2.7",
@@ -44,7 +38,7 @@
     "ts-jest": "^29.4.6"
   },
   "lint-staged": {
-    "*.{js,mjs}": [
+    "*.{js,mjs,ts,tsx}": [
       "eslint --fix",
       "prettier --write"
     ],

@@ -1,5 +1,5 @@
 import { gql } from 'graphql-request';
-import { client } from './client';
+import { client } from './client.ts';
 
 export const CREATE_TRANSLATION = gql`
   mutation CreateTranslation(
@@ -17,10 +17,11 @@ export const CREATE_TRANSLATION = gql`
 `;
 
 export const PUBLISH_TRANSLATION = gql`
-  mutation PublishTranslation($id: ID!) {
-    publishTranslation(where: { id: $id }, to: PUBLISHED) {
+  mutation PublishTranslation($id: ID!, $locales: [Locale!]) {
+    publishTranslation(where: { id: $id }, to: PUBLISHED, locales: $locales) {
       id
       stage
+      locale
     }
   }
 `;
@@ -29,6 +30,7 @@ export async function createAndPublishTranslation(
   translationId: string,
   description: string,
   translation: string,
+  locale: string,
 ) {
   const createData = await client.request(CREATE_TRANSLATION, {
     translationId,
@@ -36,6 +38,6 @@ export async function createAndPublishTranslation(
     translation,
   });
   const id = createData.createTranslation.id;
-  const publishData = await client.request(PUBLISH_TRANSLATION, { id });
+  const publishData = await client.request(PUBLISH_TRANSLATION, { id, locales: [locale] });
   return { createData, publishData };
 }

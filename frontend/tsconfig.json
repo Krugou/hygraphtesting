@@ -3,6 +3,11 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "baseUrl": "./src",
+    "ignoreDeprecations": "6.0",
+    "types": [
+      "jest"
+    ],
+    "moduleResolution": "bundler",
     "allowJs": true,
     "noEmit": true
   },
