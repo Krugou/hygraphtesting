@@ -10,6 +10,12 @@
   "scripts": {
     "start": "npm -w server run start",
     "dev": "concurrently \"npm -w server run dev\" \"npm -w frontend run dev\"",
+    "dev:host": "concurrently \"npm -w server run dev\" \"npm -w frontend run dev:host\"",
+    "preview": "npm -w frontend run preview",
+    "export:json": "npm -w server run export:json",
+    "install:all": "npm install",
+    "build:all": "npm run build --workspaces --if-present",
+    "clean": "npm run clean --workspaces --if-present && rimraf node_modules package-lock.json",
     "test:queries": "npm -w server run test:queries",
     "test:mutations": "npm -w server run test:mutations",
     "test:push-locales": "npm -w server run test:push-locales",
@@ -18,10 +24,15 @@
     "test:management": "npm -w server run test:management",
     "test:all": "npm -w server run test:all",
     "lint": "eslint .",
+    "lint:all": "npm run lint --workspaces --if-present",
     "lint:fix": "eslint . --fix",
     "lint:md": "markdownlint '**/*.md'",
     "format": "prettier --write .",
     "prepare": "husky install"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=9.0.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
@@ -35,6 +46,7 @@
     "lint-staged": "^16.2.7",
     "markdownlint-cli": "^0.47.0",
     "prettier": "^3.8.1",
+    "rimraf": "^6.0.1",
     "ts-jest": "^29.4.6"
   },
   "lint-staged": {

@@ -1,5 +1,5 @@
 import { gql } from 'graphql-request';
-import { client } from './client.ts';
+import { client } from './client.js';
 
 export const CREATE_TRANSLATION = gql`
   mutation CreateTranslation(

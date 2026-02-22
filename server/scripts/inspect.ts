@@ -1,5 +1,5 @@
 import { gql } from 'graphql-request';
-import { client } from './client';
+import { client } from './client.js';
 
 export const GET_SCHEMA_TYPES = gql`
   query GetSchemaTypes {

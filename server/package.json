@@ -4,14 +4,16 @@
   "type": "module",
   "scripts": {
     "start": "node index.ts",
-    "dev": "ts-node index.ts",
-    "test:queries": "ts-node scripts/queries.ts",
-    "test:mutations": "ts-node scripts/mutations.ts",
-    "test:push-locales": "ts-node scripts/pushLocales.ts",
-    "test:user-models": "ts-node scripts/userModels.ts",
-    "test:assets": "ts-node scripts/assets.ts",
-    "test:management": "ts-node scripts/management.ts",
-    "test:all": "npm run test:queries && npm run test:mutations && npm run test:push-locales && npm run test:user-models && npm run test:assets && npm run test:management"
+    "dev": "tsx index.ts",
+    "test:queries": "tsx scripts/queries.ts",
+    "test:mutations": "tsx scripts/mutations.ts",
+    "test:push-locales": "tsx scripts/pushLocales.ts",
+    "test:user-models": "tsx scripts/userModels.ts",
+    "test:assets": "tsx scripts/assets.ts",
+    "test:management": "tsx scripts/management.ts",
+    "export:json": "tsx scripts/exportTranslations.ts",
+    "test:all": "npm run test:queries && npm run test:mutations && npm run test:push-locales && npm run test:user-models && npm run test:assets && npm run test:management",
+    "clean": "rimraf dist"
   },
   "dependencies": {
     "@hygraph/management-sdk": "^1.5.2",
@@ -25,7 +27,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.3.0",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
     "typescript": "^5.7.3"
   }
 }

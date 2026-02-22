@@ -2,8 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 
-import healthRoutes from './routes/health';
-import translationRoutes from './routes/translations';
+import healthRoutes from './routes/health.js';
+import translationRoutes from './routes/translations.js';
 
 const app = express();
 app.use(cors());

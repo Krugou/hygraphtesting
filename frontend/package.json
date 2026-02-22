@@ -4,9 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
+    "dev": "vite --open",
+    "dev:host": "vite --host",
+    "build": "tsc && vite build",
+    "preview": "vite preview --open",
+    "preview:host": "vite preview --host",
+    "clean": "rimraf dist .vite"
   },
   "dependencies": {
     "react": "^18.2.0",

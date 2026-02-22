@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { pushLocales } from '../../scripts/pushLocales.js';
+import { pushLocales } from '../scripts/pushLocales.js';
 import { gql } from 'graphql-request';
-import { client } from '../../scripts/client.js';
+import { client } from '../scripts/client.js';
 
 const router = Router();
 

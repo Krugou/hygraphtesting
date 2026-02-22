@@ -4,7 +4,8 @@ A comprehensive testing environment to explore and demonstrate [Hygraph](https:/
 
 ## Prerequisites
 
-- **Node.js** v16+
+- **Node.js** v18+
+- **npm** v9+
 - **A Hygraph** project with a configured `Translation` model (fields: `translationId`, `description`, `translation`, `localized`).
   > **Note:** if the root query field for your model does not exist you may have
   > renamed or removed it; the query script prints all available root fields and
@@ -26,10 +27,10 @@ A comprehensive testing environment to explore and demonstrate [Hygraph](https:/
    cd hygraphtesting
    ```
 
-2. **Install dependencies**
+2. **Install all dependencies**
 
    ```bash
-   npm install
+   npm run install:all
    ```
 
 3. **Configure environment variables**
@@ -51,78 +52,63 @@ A comprehensive testing environment to explore and demonstrate [Hygraph](https:/
 
 ## Available Scripts
 
-All of the sample scripts now persist their console output into individual log
-files under a `.log/` directory (`queries.log`, `mutations.log`,
-`assets.log`, `management.log`). This makes it easier to review results after
-running `npm run test:all` or troubleshooting CI jobs.
+The project is organized using npm workspaces. All commands below should be run from the **root** directory.
 
-| Command                     | Script                   | Description                                                  |
-| --------------------------- | ------------------------ | ------------------------------------------------------------ |
-| `npm run test:queries`      | `scripts/queries.js`     | Fetch translations with ordering & pagination                |
-| `npm run test:user-models`  | `scripts/userModels.js`  | List custom schema models and sample entries                 |
-| `npm run test:mutations`    | `scripts/mutations.js`   | Create and publish a translation entry in one request        |
-| `npm run test:push-locales` | `scripts/pushLocales.js` | Create both fi and en translations for a key                 |
-| `npm run test:assets`       | `scripts/assets.js`      | Upload a remote image via the GraphQL `createAsset` mutation |
-| `npm run test:management`   | `scripts/management.js`  | Create a model & field via the Management SDK                |
+| `npm run dev`          | Launch both Express API and Vite frontend (auto-opens browser)            |
+| `npm run dev:host`     | Launch both with network exposure (--host)                                |
+| `npm run preview`      | Preview the production build of the frontend                              |
+| `npm run export:json`  | Export all translations from Hygraph to a nested JSON file                |
+| `npm run start`        | Start the Express API server                                              |
+| `npm run build:all`    | Type-check and build all workspace packages                               |
+| `npm run clean`        | Deep clean the repository (removes node_modules and build artifacts)       |
+| `npm run test:all`     | Run all Hygraph utility tests (queries, mutations, assets, etc.)          |
+| `npm run lint:all`     | Run ESLint and Markdownlint across all packages                           |
+
+### Individual Test Scripts
+
+You can run specific server-side tests from the root:
+- `npm run test:queries`
+- `npm run test:mutations`
+- `npm run test:push-locales`
+- `npm run test:user-models`
+- `npm run test:assets`
+- `npm run test:management`
 
 ## Project Structure
 
 ```text
 hygraphtesting/
-├── server/              # Express API server for pushing translations
-│   └── index.ts         # TypeScript backend
-├── scripts/             # TypeScript Hygraph utilities
-│   ├── client.ts        # Shared GraphQL client (reads .env)
-│   ├── queries.ts       # Query tests
-│   ├── mutations.ts     # Mutation tests
-│   ├── assets.ts        # Asset upload tests
-│   ├── management.ts    # Management SDK tests
-│   └── pushLocales.ts   # Locale push helper
-├── frontend/            # Vite + React + Tailwind UI for translation form
-│   ├── package.json
-│   ├── vite.config.js
-│   └── src/
-│       ├── App.tsx
-│       ├── components/
-│       │   ├── TranslationLookup.tsx
-│       │   ├── TranslationKeysPanel.tsx
-│       │   └── TranslationPushForm.tsx
-│       └── index.css
-├── tests/               # Jest tests for translation and asset ops
+├── server/              # Express API server & Hygraph Utilities
+│   ├── index.ts         # TypeScript entry point
+│   ├── scripts/         # Hygraph utility logic (queries, mutations, etc.)
+│   └── package.json
+├── frontend/            # Vite + React + Tailwind UI
+│   ├── src/             # Frontend source code
+│   └── package.json
+├── tests/               # Jest tests for core logic
 ├── .env.example         # Environment variable template
-├── .gitignore
-├── package.json         # root repo (includes server dependencies)
+├── package.json         # Workspace root (orchestrator)
 └── README.md
 ```
 
 ## Web Interface
 
-The project now uses a fully TypeScript-based frontend and backend:
+The project uses a unified workspace structure:
 
-- **server/** – Express API in TypeScript exposes `/api/translations` and wraps the `pushLocales` helper.
-- **frontend/** – Vite‑powered React + Tailwind CSS v4 project. All components are TypeScript (TSX). Tailwind uses the `@tailwindcss/vite` plugin and a simple `@import 'tailwindcss'` entry in `src/index.css` (no `tailwind.config.js` or `postcss.config.js`).
-- **Locale Switching** – The UI allows users to select a locale for translation lookup and editing. All translation forms and lookup panels are locale-aware.
-- **Error Handling** – Robust error handling and logging are implemented throughout the frontend and backend.
-- **Test Automation** – Jest tests cover translation management, asset operations, environment validation, and schema introspection.
+- **server/** – Express API and Hygraph logic. Exposes `/api/translations` and wraps utility helpers.
+- **frontend/** – Vite-powered React + Tailwind CSS v4 project.
+- **Unified Workflow** – Running `npm run dev` from the root handles both components, making local development seamless.
 
 ### Running the application
 
-1. Install root dependencies and start both server and frontend in one go:
+1. Install all dependencies and start the dev environment:
 
    ```bash
-   npm install
-   npm run dev             # launches Express on 3000 and Vite on 5173
+   npm run install:all
+   npm run dev
    ```
 
-(you can still run `npm run start:server` or `cd frontend && npm run dev` separately if you prefer)
-
-2. Open a second terminal, change into `frontend/` and bring up the UI:
-
-```bash
-cd frontend
-npm install
-npm run dev             # starts Vite on http://localhost:5173
-```
+2. Open the browser to `http://localhost:5173` to access the modern UI.
 
 3. Open the browser to `http://localhost:5173` and you'll see a modern UI:
 
@@ -138,15 +124,13 @@ All features use the `/api/translations` endpoint; `GET` looks up data and `POST
 - **Schema Management** — Creating models and fields with the Management SDK
 - **Content Federation** — Querying remote sources through a unified endpoint
 - **Localization (i18n)** — Multi-language content variants with locale switching
-
 ## TypeScript Migration
 
-All scripts, server, and frontend components are now TypeScript. Run tests with `npm run test:all` and scripts with `npx ts-node scripts/*.ts`.
+All scripts, server, and frontend components are now TypeScript. Run tests with `npm run test:all` and scripts with workspace commands (e.g., `npm run test:queries`).
 
 ## Test Automation
 
 Jest tests are located in the `tests/` folder and cover:
-
 - Translation management
 - Asset operations
 - Environment validation
@@ -154,22 +138,9 @@ Jest tests are located in the `tests/` folder and cover:
 
 ## CI/CD & Linting
 
-Linting and formatting are automated with `eslint`, `prettier`, and `markdownlint`. Add GitHub Actions for dependency updates and linting as needed.
-
-- **GraphQL Queries** — Fetching, filtering, sorting, and paginating content
-- **GraphQL Mutations** — Creating, updating, and publishing entries
-- **Nested & Bulk Mutations** — Modifying related entities in a single request
-- **Content Stages & Workflows** — Moving entries through `DRAFT → PUBLISHED`
-- **Asset Management** — Programmatic upload via the REST endpoint
-- **Schema Management** — Creating models and fields with the Management SDK
-- **Content Federation** — Querying remote sources through a unified endpoint
-- **Localization (i18n)** — Multi-language content variants
+Linting and formatting are automated with `eslint`, `prettier`, and `markdownlint`. Run `npm run lint:all` to check the entire workspace.
 
 ## Dependencies
-
-> **Note:** markdown files are checked with `markdownlint` using `.markdownlint.json`
-> (MD031 enforces blank lines around fenced code). Run `npm run lint:md` or
-> add `*.md` to `lint-staged` for pre‑commit checks.
 
 | Package                                                                            | Purpose                          |
 | ---------------------------------------------------------------------------------- | -------------------------------- |
