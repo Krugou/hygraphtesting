@@ -12,11 +12,11 @@
     "clean": "rimraf dist .vite"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.0.0",
+    "@vitejs/plugin-react": "^5.1.4",
     "vite": "^7.3.1",
     "tailwindcss": "^4.0.0",
     "@tailwindcss/vite": "^4.0.0",
