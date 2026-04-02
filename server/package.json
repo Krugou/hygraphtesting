@@ -19,9 +19,9 @@
     "@hygraph/management-sdk": "^1.5.2",
     "cors": "^2.8.5",
     "express": "^5.2.1",
-    "graphql": "^16.13.1",
+    "graphql": "^16.13.2",
     "graphql-request": "^7.4.0",
-    "dotenv": "^17.3.1"
+    "dotenv": "^17.4.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
