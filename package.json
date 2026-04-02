@@ -37,8 +37,8 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "concurrently": "^9.2.1",
-    "dotenv": "^17.3.1",
-    "eslint": "^10.0.3",
+    "dotenv": "^17.4.0",
+    "eslint": "^10.1.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "husky": "^9.1.7",
@@ -47,7 +47,7 @@
     "markdownlint-cli": "^0.48.0",
     "prettier": "^3.8.1",
     "rimraf": "^6.0.1",
-    "ts-jest": "^29.4.6"
+    "ts-jest": "^29.4.9"
   },
   "lint-staged": {
     "*.{js,mjs,ts,tsx}": [
