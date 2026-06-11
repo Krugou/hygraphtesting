@@ -16,7 +16,7 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@hygraph/management-sdk": "^1.5.2",
+    "@hygraph/management-sdk": "^1.5.3",
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "graphql": "^16.14.2",
@@ -26,7 +26,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/node": "^25.9.2",
+    "@types/node": "^25.9.3",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3"
   }
