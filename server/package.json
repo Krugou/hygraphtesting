@@ -19,15 +19,15 @@
     "@hygraph/management-sdk": "^1.5.3",
     "cors": "^2.8.5",
     "express": "^5.2.1",
-    "graphql": "^17.0.1",
+    "graphql": "^17.0.2",
     "graphql-request": "^7.4.0",
     "dotenv": "^17.4.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/node": "^26.0.0",
-    "tsx": "^4.22.4",
+    "@types/node": "^26.1.0",
+    "tsx": "^4.23.0",
     "typescript": "^6.0.3"
   }
 }
